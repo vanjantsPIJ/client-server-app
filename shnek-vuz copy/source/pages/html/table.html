@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table</title>
+</head>
+<body>
+    <style>
+        * {
+            font-family: 'Arial', sans-serif;
+        }
+
+        button, input {
+            background: none;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            width: fit-content;
+        }
+
+        .header {
+            width: 180px;
+            padding: 4px 0;
+            background: rgb(219, 219, 219);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .page {
+            margin: 0 20px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            max-width: 200px;
+            margin-top: 50px;
+        }
+
+        .form__input {
+            margin-top: 5px;
+            background: gainsboro;
+            padding: 6px;
+        }
+
+        .form__button {
+            margin-top: 20px;
+            margin-right: auto;
+            padding: 8px;
+            background: #22e425;
+            color: white;
+        }
+    </style>
+
+    {% if not pages %}
+        <div>список пуст</div>
+    {% endif %}
+
+    <div class="container">
+        <table>
+            <tr>
+                <th 
+                    class="header"
+                    scope="col"
+                >
+                    GDS_ID
+                </th>
+                <th 
+                    class="header"
+                    scope="col"
+                >
+                    RegionID
+                </th>
+                <th 
+                    class="header"
+                    scope="col"
+                >
+                    TempSensorID
+                </th>
+                <th 
+                    class="header"
+                    scope="col"
+                >
+                    PressureSensorID
+                </th>
+            </tr>
+
+            {% for GDS in GDSes %}
+            <tr>
+                <th scope="row">
+                    {{ GDS.GDS_ID }}
+                </th>
+                <td>
+                    {{ GDS.RegionID }}
+                </td>
+                <td>
+                    {{ GDS.GDS_Temperature.TempSensorID }}
+                </td>
+                <td>
+                    {{ GDS.GDS_Pressure.PressureSensorID }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% if pages %}
+        <div class="nav">
+            {% if page > 1 %}
+            <a href="{{ '/pages/table?page=%s'%prevPage }}">
+                Назад
+            </a>
+            {% endif %}
+
+            <div class="page">
+                {{ page }} из {{ pages }}
+            </div>
+
+            {% if page < pages %}
+            <a href="{{ '/pages/table?page=%s'%nextPage }}">
+                Вперед
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="form">
+        <input
+            class="form__input"
+            id="GDS_ID"
+            placeholder="GDS_ID"
+        />
+        <input
+            class="form__input"
+            id="RegionID"
+            placeholder="RegionID"
+        />
+        <input
+            class="form__input"
+            id="TempSensorID"
+            placeholder="TempSensorID"
+        />
+        <input
+            class="form__input"
+            id="PressureSesnorID"
+            placeholder="PressureSensorID"
+        />
+
+        <button
+            class="form__button"
+            id="add"
+        >
+            Добавить
+        </button>
+    </div>
+
+    <script>
+        const button = document.getElementById('add');
+
+        const TempSensorButton = document.querySelectorAll('#TempSensorButton');
+        const PressureSensorButton = document.querySelectorAll('#PressureSensorButton');
+
+        const input_GDS_ID = document.getElementById('GDS_ID');
+        const input_RegionID = document.getElementById('RegionID');
+        const input_TempSensorID = document.getElementById('TempSensorID');
+        const input_PressureSensorID = document.getElementById('PressureSesnorID');
+
+        button.addEventListener('click', async () => {
+            try {
+                button.disabled = true;
+
+                const data = {
+                    GDS: {
+                        GDS_ID: Number(input_GDS_ID.value),
+                        RegionID: input_RegionID.value,
+                    },
+                    GDS_Temperature: {
+                        GDS_ID: Number(input_GDS_ID.value),
+                        TempSensorID: Number(input_TempSensorID.value),
+                    },
+                    GDS_Pressure: {
+                        GDS_ID: Number(input_GDS_ID.value),
+                        PressureSensorID: Number(input_PressureSensorID.value),
+                    },
+                };
+                
+                const response = await fetch('/api/new', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                    },
+                    body: JSON.stringify(data),
+                });
+            } catch (error) {
+                console.error(error);
+            } finally {
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

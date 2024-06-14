@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature</title>
+</head>
+<body>
+    <style>
+        * {
+            font-family: 'Arial', sans-serif;
+        }
+
+        button, input {
+            background: none;
+            border: none;
+            outline: none;
+        }
+
+        .header {
+            width: 180px;
+            padding: 4px 0;
+            background: rgb(219, 219, 219);
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            max-width: 200px;
+            margin-top: 50px;
+        }
+
+        .form__input {
+            margin-top: 5px;
+            background: gainsboro;
+            padding: 6px;
+        }
+
+        .form__button {
+            margin-top: 20px;
+            margin-right: auto;
+            padding: 8px;
+            background: #22e425;
+            color: white;
+        }
+    </style>
+
+    {% if temperatures|length < 1 %}
+        <div>Список пуст или счетчика не существует</div>
+    {% endif %}
+
+    {% if temperatures|length >= 1 %}
+    <table>
+        <tr>
+            <th 
+                class="header"
+                scope="col"
+            >
+                TempSensorID
+            </th>
+            <th 
+                class="header"
+                scope="col"
+            >
+                Temperature
+            </th>
+            <th 
+                class="header"
+                scope="col"
+            >
+                DateTimeOfMeasure
+            </th>
+        </tr>
+
+        {% for Temp in temperatures %}
+        <tr>
+            <th scope="row">
+                {{ Temp.TempSensorID }}
+            </th>
+            <td>
+                {{ Temp.Temperature }}
+            </td>
+            <td>
+                {{ Temp.DateTimeOfMeasure }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>
